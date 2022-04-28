@@ -12,6 +12,7 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public Text BestScoreText;
     
     private bool m_Started = false;
     private int m_Points;
@@ -22,8 +23,12 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        BestScoreText.text = "Best Score: " + GameManager.Instance.playerName + " " + GameManager.Instance.highScore;
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
+        m_Points = 0;
+        ScoreText.text = $"Score : {GameManager.Instance.currentPlayerName} {m_Points}";
+
         
         int[] pointCountArray = new [] {1,1,2,2,5,5};
         for (int i = 0; i < LineCount; ++i)
@@ -60,17 +65,26 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
+        BestScoreText.text = "Best Score: " + GameManager.Instance.playerName + " " + GameManager.Instance.highScore;
     }
 
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = $"Score : {GameManager.Instance.currentPlayerName} {m_Points}";
+        if ( m_Points > GameManager.Instance.highScore )
+        {
+            GameManager.Instance.SetNewHighScore(m_Points);
+        }
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if ( m_Points > GameManager.Instance.highScore)
+        {
+            GameManager.Instance.SetNewHighScore( m_Points );
+        }
     }
 }
